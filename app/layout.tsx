@@ -1,5 +1,5 @@
 import { Montserrat } from "next/font/google";
-import Navbar from "./Components/Navbar/Navbar";
+import Navbar from "./_Components/Navbar/Navbar";
 import "./globals.css";
 // import Footer from "./Components/Footer/Footer";
 

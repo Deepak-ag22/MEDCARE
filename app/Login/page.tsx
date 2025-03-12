@@ -1,4 +1,4 @@
-import LoginComp from "../Components/LoginComp/LoginComp";
+import LoginComp from "../_Components/LoginComp/LoginComp";
 
 export default function Login(){
     return <>

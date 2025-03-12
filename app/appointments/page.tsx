@@ -1,7 +1,6 @@
-import Search from "../Components/SearchBar/Search";
-
+import ShowCards from "../_Components/CardsGrid/ShowCards";
 export default function Appointment(){
     return <>
-    <Search/>
+        <ShowCards/>
     </>
 }
