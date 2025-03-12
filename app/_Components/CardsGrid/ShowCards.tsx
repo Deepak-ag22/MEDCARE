@@ -136,21 +136,30 @@ export default function ShowCards() {
                 <input type="radio" name="rating" value="show-all" defaultChecked />
                 <span>Show All</span>
               </label>
+              
               <label className={styles.filterOption}>
-                <input type="radio" name="rating" value="5" />
-                <span>5 star</span>
+                <input type="radio" name="rating" value="1" />
+                <span>1 star</span>
               </label>
+
               <label className={styles.filterOption}>
-                <input type="radio" name="rating" value="4" />
-                <span>4 star</span>
+                <input type="radio" name="rating" value="2" />
+                <span>2 star</span>
               </label>
+
               <label className={styles.filterOption}>
                 <input type="radio" name="rating" value="3" />
                 <span>3 star</span>
               </label>
+
               <label className={styles.filterOption}>
-                <input type="radio" name="rating" value="2" />
-                <span>2 star</span>
+                <input type="radio" name="rating" value="4" />
+                <span>4 star</span>
+              </label>
+
+              <label className={styles.filterOption}>
+                <input type="radio" name="rating" value="5" />
+                <span>5 star</span>
               </label>
             </div>
           </div>
