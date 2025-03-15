@@ -5,33 +5,48 @@ export default function Appointment(){
     const [offileGreen,setOffineGreen]=useState(true);
     const [HospitalList,setHospitalList]=useState(["MediCareHeart Institute, Okhla Road"]);
     const [slotsAvailable,setSlotsAvailable]=useState([{time:"9:00 AM",isAvailable:true},
-        {time:"9:30 AM",isAvailable:true},
-        {time:"10:00 AM",isAvailable:true},
-        {time:"10:30 AM",isAvailable:false},
-        {time:"11:00 AM",isAvailable:true},
-        {time:"11:30 AM",isAvailable:false},
-        {time:"12:00 PM",isAvailable:true},
-        {time:"12:30 AM",isAvailable:true},
+      {time:"9:00 AM",isAvailable:true},
+      {time:"9:00 AM",isAvailable:true},
+      {time:"9:00 AM",isAvailable:false},
+      {time:"9:00 AM",isAvailable:true},
+      {time:"9:00 AM",isAvailable:false},
+      {time:"9:00 AM",isAvailable:true},
+      {time:"9:00 AM",isAvailable:true},
     ]);
     const [slotsAvailableE,setSlotsAvailableE]=useState([{time:"9:00 AM",isAvailable:true},
-      {time:"3:00 AM",isAvailable:true},
-      {time:"3:30 AM",isAvailable:true},
-      {time:"4:00 AM",isAvailable:false},
-      {time:"4:30 AM",isAvailable:true},
-      {time:"11: AM",isAvailable:false},
-      {time:"12:00 PM",isAvailable:true},
-      {time:"12:30 AM",isAvailable:true},
+      {time:"9:00 AM",isAvailable:false},
+      {time:"9:00 AM",isAvailable:true},
+      {time:"9:00 AM",isAvailable:true},
+      {time:"9:00 AM",isAvailable:true},
+      {time:"9:00 AM",isAvailable:false},
+      {time:"9:00 AM",isAvailable:true},
+      {time:"9:00 AM",isAvailable:false},
     ]);
     const [slotSelected,setSlotSelected]=useState(-1);
     const [slotSelectedE,setSlotSelectedE]=useState(-1);
     const [modeSelected,setModeSelected]=useState(0);
     const [count,setCount]=useState(0);
+    const [countE,setCountE]=useState(0);
      useEffect(()=>{
+      let temp=0;
+    
       slotsAvailable.forEach((data)=>{
         if(data.isAvailable)
-        setCount(count+1);
+        temp++;
       })
+     
+      setCount(temp);
+ 
          
+     },[])
+     useEffect(()=>{
+      let temp2=0;
+      slotsAvailableE.forEach((data)=>{
+        if(data.isAvailable)
+          temp2++;
+      })
+     
+      setCountE(temp2);
      },[])
     function handleToggle(i:any){
       if(i==1&&offileGreen){
@@ -45,11 +60,18 @@ export default function Appointment(){
     }
     function handleSlotSelection(i:any){
       setSlotSelected(i);
+      if(slotSelectedE!=-1)
+        setSlotSelectedE(-1)
       
     }
     function handleSlotSelectionE(i:any){
       setSlotSelectedE(i);
+      if(slotSelected!=-1)
+        setSlotSelected(-1)
       
+    }
+    function handleNext(){
+      //handleNext
     }
     return (
       <main className={style.main}>
@@ -84,14 +106,14 @@ export default function Appointment(){
                            <div className={style.morning}>Morning</div>
                         </div>
                         <div className={style.countOfSlots}>
-                          <span> Slots{count} </span>
+                          <span> Slots {count} </span>
                         </div>
                 </div>
                 <div className={style.horizontalLine}></div>
               <div className={style.availableSlotsContainer}>
                 {slotsAvailable.map((data,i)=>{
                     return (
-                     <button onClick={()=>handleSlotSelection(i)} className={(i==slotSelected)?style.bgGreen:style.bgWhite} key={i}>{data.time}</button>
+                     <button onClick={()=>handleSlotSelection(i)} className={`{(i==slotSelectedE)?style.bgGreen:style.bgWhite} ${(data.isAvailable)?"":style.disabled}`} key={i}>{data.time}</button>
                     )
                 })}
               </div>
@@ -99,24 +121,25 @@ export default function Appointment(){
               <div className={style.availableSlots}>
                 <div className={style.sunCountOfSlots}>
                         <div className={style.sunMorning}>
-                           <div className={style.sun}></div>
+                           <div className={style.sunset}></div>
                            <div className={style.morning}>Evening</div>
                         </div>
                         <div className={style.countOfSlots}>
-                          <span> Slots{count} </span>
+                          <span> Slots {countE} </span>
                         </div>
                 </div>
                 <div className={style.horizontalLine}></div>
               <div className={style.availableSlotsContainer}>
                 {slotsAvailableE.map((data,i)=>{
                     return (
-                     <button onClick={()=>handleSlotSelectionE(i)} className={(i==slotSelectedE)?style.bgGreen:style.bgWhite} key={i}>{data.time}</button>
+                     <button onClick={()=>handleSlotSelectionE(i)} className={`{(i==slotSelectedE)?style.bgGreen:style.bgWhite} ${(data.isAvailable)?"":style.disabled}`} key={i}>{data.time}</button>
                     )
                 })}
               </div>
               </div>
-              
+              <button className={style.nextButton} onClick={()=>handleNext}>Next</button> 
            </div>
+           
         </div>
       </main>
     )
