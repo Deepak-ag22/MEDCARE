@@ -37,7 +37,7 @@ export default function Appointment() {
     useEffect(() => {
         let temp = 0;
 
-        slotsAvailable.forEach((data) => {
+        slotsAvailable.forEach((data:any) => {
             if (data.isAvailable) temp++;
         });
 
@@ -45,7 +45,7 @@ export default function Appointment() {
     }, []);
     useEffect(() => {
         let temp2 = 0;
-        slotsAvailableE.forEach((data) => {
+        slotsAvailableE.forEach((data:any) => {
             if (data.isAvailable) temp2++;
         });
 
@@ -121,11 +121,11 @@ export default function Appointment() {
                         </div>
                         <div className={style.horizontalLine}></div>
                         <div className={style.availableSlotsContainer}>
-                            {slotsAvailable.map((data, i) => {
+                            {slotsAvailable.map((data:any, i:any) => {
                                 return (
                                     <button
                                         onClick={() => handleSlotSelection(i)}
-                                        className={`{(i==slotSelectedE)?style.bgGreen:style.bgWhite} ${
+                                        className={`${(i==slotSelected)?style.bgGreen:style.bgWhite} ${
                                             data.isAvailable
                                                 ? ""
                                                 : style.disabled
@@ -150,11 +150,11 @@ export default function Appointment() {
                         </div>
                         <div className={style.horizontalLine}></div>
                         <div className={style.availableSlotsContainer}>
-                            {slotsAvailableE.map((data, i) => {
+                            {slotsAvailableE.map((data:any, i:any) => {
                                 return (
                                     <button
                                         onClick={() => handleSlotSelectionE(i)}
-                                        className={`{(i==slotSelectedE)?style.bgGreen:style.bgWhite} ${
+                                        className={`${(i==slotSelectedE)?style.bgGreen:style.bgWhite} ${
                                             data.isAvailable
                                                 ? ""
                                                 : style.disabled
