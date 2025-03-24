@@ -11,23 +11,23 @@ export default function Appointment() {
     ]);
     const [slotsAvailable, setSlotsAvailable] = useState([
         { time: "9:00 AM", isAvailable: true },
-        { time: "9:00 AM", isAvailable: true },
-        { time: "9:00 AM", isAvailable: true },
-        { time: "9:00 AM", isAvailable: false },
-        { time: "9:00 AM", isAvailable: true },
-        { time: "9:00 AM", isAvailable: false },
-        { time: "9:00 AM", isAvailable: true },
-        { time: "9:00 AM", isAvailable: true },
+        { time: "9:30 AM", isAvailable: true },
+        { time: "10:00 AM", isAvailable: true },
+        { time: "10:30 AM", isAvailable: false },
+        { time: "11:00 AM", isAvailable: true },
+        { time: "11:30 AM", isAvailable: false },
+        { time: "12:00 AM", isAvailable: true },
+        { time: "12:30 AM", isAvailable: true },
     ]);
     const [slotsAvailableE, setSlotsAvailableE] = useState([
-        { time: "9:00 AM", isAvailable: true },
-        { time: "9:00 AM", isAvailable: false },
-        { time: "9:00 AM", isAvailable: true },
-        { time: "9:00 AM", isAvailable: true },
-        { time: "9:00 AM", isAvailable: true },
-        { time: "9:00 AM", isAvailable: false },
-        { time: "9:00 AM", isAvailable: true },
-        { time: "9:00 AM", isAvailable: false },
+        { time: "4:00 PM", isAvailable: true },
+        { time: "4:30 PM", isAvailable: false },
+        { time: "5:00 PM", isAvailable: true },
+        { time: "5:30 PM", isAvailable: true },
+        { time: "6:00 PM", isAvailable: true },
+        { time: "6:30 PM", isAvailable: false },
+        { time: "7:00 PM", isAvailable: true },
+        { time: "7:30 PM", isAvailable: false },
     ]);
     const [slotSelected, setSlotSelected] = useState(-1);
     const [slotSelectedE, setSlotSelectedE] = useState(-1);
