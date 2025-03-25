@@ -1,5 +1,6 @@
 import { Montserrat } from "next/font/google";
 import Navbar from "./_Components/Navbar/Navbar";
+import { LoginProvider } from "./providers/loginProvider";
 import "./globals.css";
 import { Metadata } from "next";
 
@@ -22,9 +23,10 @@ export default function RootLayout({
     return (
         <html lang="en" className={montserrat.variable}>
             <body>
-                <Navbar />
-                {children}
-                {/* <Footer/> */}
+                <LoginProvider>
+                     <Navbar />
+                     {children}
+                 </LoginProvider>
             </body>
         </html>
     );
