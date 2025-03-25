@@ -1,11 +1,12 @@
 import styles from "./signup.module.css";
 import Image from "next/image";
+import Link from "next/link";
 export default function SignUpForm() {
     return (
         <div className={styles.signupContainer}>
             <h2>Sign Up</h2>
             <p>
-                Already a member? <a href="/login">Login.</a>
+                Already a member? <Link href="/login">Login.</Link>
             </p>
 
             {/* <label>Role</label>
