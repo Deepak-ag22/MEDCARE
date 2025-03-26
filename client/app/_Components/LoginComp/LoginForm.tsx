@@ -6,6 +6,7 @@ import styles from "./Login.module.css";
 import Image from "next/image";
 import { useLogin } from "@/app/providers/loginProvider";
 import { useRouter } from "next/navigation";
+import GoogleButton from "../googleSignUpButton/Googlebutton";
 
 export default function LoginForm() {
     const [email, setEmail] = useState("");
@@ -54,7 +55,9 @@ export default function LoginForm() {
         setEmail("");
         setPassword("");
     };
-
+    const handleGoogleSignIn = () => {
+        window.location.href = "http://localhost:3001/api/users/google";
+    };
     return (
         <div className={styles.loginContainer}>
             <h2>Login</h2>
@@ -126,6 +129,11 @@ export default function LoginForm() {
                 <p className={styles.forgot}>
                     <Link href="/forgot-password">Forgot Password?</Link>
                 </p>
+                <div className={styles.divider}>
+                     <span>or</span>
+                 </div>
+ 
+                 <GoogleButton onClick={handleGoogleSignIn} />
             </form>
         </div>
     );

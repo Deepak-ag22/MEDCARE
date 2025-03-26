@@ -5,6 +5,7 @@ import styles from "./signup.module.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useLogin } from "@/app/providers/loginProvider";
+import GoogleButton from "../googleSignUpButton/Googlebutton";
 
 export default function SignUpForm() {
     const [password, setPassword] = useState("");
@@ -86,6 +87,10 @@ export default function SignUpForm() {
         setName("");
         setEmail("");
         setPassword("");
+    };
+
+    const handleGoogleSignIn = () => {
+        window.location.href = "http://localhost:3001/api/users/google";
     };
 
     return (
@@ -173,6 +178,14 @@ export default function SignUpForm() {
                 >
                     Reset
                 </button>
+                <div className={styles.divider}>
+                     <span>or</span>
+                 </div>
+ 
+                 <GoogleButton
+                     onClick={handleGoogleSignIn}
+                     text="Sign up with Google"
+                 />
             </form>
         </div>
     );
