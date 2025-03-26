@@ -4,7 +4,7 @@ import Link from "next/link";
 import styles from "./Navbar.module.css";
 import Image from "next/image";
 import { useLogin } from "@/app/providers/loginProvider";
-
+import { FaAmbulance } from "react-icons/fa";
 export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
     const { user, logout, fetchUser } = useLogin();
@@ -38,6 +38,21 @@ export default function Navbar() {
                     <li>
                         <Link href="/">Reviews</Link>
                     </li>
+                    <li>
+                         <Link
+                             style={{
+                                 color: "red",
+                                 display: "flex",
+                                 gap: "5px",
+                                 justifyContent: "center",
+                                 alignItems: "center",
+                             }}
+                             href="/help"
+                            >
+                             <FaAmbulance />
+                             Help
+                         </Link>
+                     </li>
                 </ul>
             </div>
 
@@ -103,7 +118,7 @@ export default function Navbar() {
                             </Link>
                         </li>
                         <li>
-                            <Link href="/" onClick={() => setMenuOpen(false)}>
+                            <Link href="/healthblog" onClick={() => setMenuOpen(false)}>
                                 Health Blog
                             </Link>
                         </li>
@@ -111,6 +126,21 @@ export default function Navbar() {
                             <Link href="/" onClick={() => setMenuOpen(false)}>
                                 Reviews
                             </Link>
+                        </li>
+                        <li>
+                            <Link
+                                style={{
+                                    color: "red",
+                                    display: "flex",
+                                    gap: "5px",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}
+                                 href="/help"
+                            >
+                                <FaAmbulance />
+                                Help
+                         </Link>
                         </li>
                     </ul>
                     <div className={styles.btncon}>
