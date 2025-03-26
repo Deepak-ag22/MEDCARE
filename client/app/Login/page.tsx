@@ -1,9 +1,38 @@
-import LoginComp from "../_Components/LoginComp/LoginComp";
+"use client";
 
-export default function Login(){
-    return <>
-    <div>
-        <LoginComp/>
-    </div>
-    </>
+import { useLogin } from "@/app/providers/loginProvider";
+import LoginComp from "../_Components/LoginComp/LoginComp";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
+export default function Login() {
+    const { user } = useLogin();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (user)  router.replace("/");    
+    }, [user]);
+
+    if (user) {
+        return (
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: "100%",
+                }}
+            >
+                Already Logged in, redirecting to homePage!
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <div>
+                <LoginComp />
+            </div>
+        </>
+    );
 }
