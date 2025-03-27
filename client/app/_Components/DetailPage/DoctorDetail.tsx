@@ -51,8 +51,8 @@ export default function DoctorPage({ doctor }: DoctorPageProps) {
                     </div>
                 </div>
                 <div className={styles.aboutSection}>
-                    <h2>About Dr. {doctor.name}</h2>
-                    <p>Dr. {doctor.name} is a highly experienced {doctor.specialty} known for providing excellent patient care and medical expertise.</p>
+                    <h2>About {doctor.name}</h2>
+                    <p> {doctor.name} is a highly experienced {doctor.specialty} known for providing excellent patient care and medical expertise.</p>
                     <p>With over {doctor.experience} years in the field, {doctor.name} has treated numerous cases with utmost professionalism and dedication.</p>
                 </div>
             </div>
