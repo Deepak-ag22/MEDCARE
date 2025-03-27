@@ -6,10 +6,10 @@ const port = process.env.PORT;
 const cors = require("cors")
 app.use(
     cors({
-        origin: process.env.frontendURL, 
+        origin: "http://localhost:3000", 
         credentials: true, 
         methods: "GET,POST,PUT,DELETE",
-        allowedHeaders: "Content-Type,Authorization", 
+        allowedHeaders: "Content-Type,Authorization,Accept", 
     })
 );
 app.use(express.urlencoded({ extended: false }));

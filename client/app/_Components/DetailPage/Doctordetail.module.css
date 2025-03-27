@@ -1,207 +1,128 @@
+/* Background container */
+.backgroundContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: url('/details.png') no-repeat center center fixed;
+    background-size: cover;
+    z-index: -1;
+}
+
+/* Main container for doctor details */
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
+    max-width: 800px;
+    margin: 80px auto;
+    padding: 20px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.header {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 2rem;
-    margin-bottom: 2rem;
-}
-
-.doctorInfo {
+/* Doctor profile card */
+.profileCard {
     display: flex;
-    gap: 2rem;
-    margin-bottom: 2rem;
+    align-items: center;
+    padding: 20px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.9); /* Slightly opaque white */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.imageContainer {
-    flex-shrink: 0;
+/* Left section for doctor image */
+.leftSection {
+    margin-right: 20px;
 }
 
 .doctorImage {
-    border-radius: 8px;
-    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #19671c; /* Green border */
 }
 
-.basicInfo {
-    flex-grow: 1;
-}
-
-.basicInfo h1 {
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 0.5rem;
-}
-
-.designation {
-    color: #1C4A2A;
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-}
-
-.experience {
-    color: #666;
-    margin-bottom: 1rem;
-}
-
-.actionButton {
+/* Right section for doctor info */
+.rightSection {
     flex: 1;
-    padding: 1rem;
-    border: 2px solid #1C4A2A;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    
-    transition: all 0.3s ease;
-}
-.ratingContainer {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
 }
 
-.hospital {
+/* Doctor details */
+.name {
+    font-size: 22px;
+    font-weight: bold;
     color: #333;
-    margin-bottom: 0.5rem;
 }
 
-.fee {
-    color: #1C4A2A;
-    font-weight: 600;
-    font-size: 1.1rem;
+.specialty, .experience, .location {
+    color: #555;
+    font-size: 16px;
 }
 
+.rating {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    color: #ff9800;
+}
+
+.rating img {
+    margin-left: 5px;
+}
+
+/* Availability */
+.availability {
+    font-weight: bold;
+    margin-top: 10px;
+    color: #1f4d22;
+}
+
+/* Buttons */
 .actions {
     display: flex;
-    gap: 1rem;
+    gap: 10px;
+    margin-top: 15px;
 }
-.actionButton.active {
-    background-color: #1C4A2A;
+
+.bookButton, .contactButton {
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.bookButton {
+    background: #105a13;
+    color: white;
+    border: none;
+}
+
+.bookButton:hover {
+    background: #386d3a;
+}
+
+.contactButton {
+    background: #ffffff;
+    border: 2px solid #0f4d11;
+    color: #1c611f;
+}
+
+.contactButton:hover {
+    background: #48934b;
     color: white;
 }
 
-.actionButton:not(.active) {
-    background-color: white;
-    color: #1C4A2A;
-}
-
-.actionButton:hover:not(.active) {
-    background-color: #e8f5e9;
-}
-
-.content {
-    background-color: #fff;
+/* About Section */
+.aboutSection {
+    margin-top: 30px;
+    padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 2rem;
+    background: rgba(255, 255, 255, 0.8);
 }
 
-.tabs {
-    display: flex;
-    gap: 1rem;
-    border-bottom: 1px solid #e0e0e0;
-    margin-bottom: 2rem;
-}
-
-.tab {
-    padding: 1rem 2rem;
-    border: none;
-    background: none;
-    font-size: 1rem;
-    color: #666;
-    cursor: pointer;
-    position: relative;
-}
-
-.tab.activeTab {
-    color: #1C4A2A;
-    font-weight: 600;
-}
-
-.tab.activeTab::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: #1C4A2A;
-}
-
-.tabContent {
-    color: #333;
-}
-
-.aboutSection h2,
-.educationSection h2,
-.publicationsSection h2 {
-    color: #1C4A2A;
-    margin-bottom: 1rem;
-}
-
-.aboutSection p {
-    line-height: 1.6;
-    margin-bottom: 2rem;
-}
-
-.languages {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
-.language {
-    background-color: #e8f5e9;
-    color: #1C4A2A;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-}
-
-.educationList,
-.awardsList,
-.publicationsList {
-    list-style: none;
-    padding: 0;
-}
-
-.educationList li,
-.awardsList li,
-.publicationsList li {
-    padding: 1rem;
-    border-bottom: 1px solid #e0e0e0;
-    line-height: 1.4;
-}
-
-.educationList li:last-child,
-.awardsList li:last-child,
-.publicationsList li:last-child {
-    border-bottom: none;
-}
-
-@media (max-width: 768px) {
-    .actions {
-        flex-direction: column;
-    }
-
-    .tabs {
-        flex-wrap: wrap;
-    }
-    
-    .doctorInfo {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
-    .tab {
-        flex: 1;
-        text-align: center;
-        padding: 0.8rem;
-    }
+.aboutSection h2 {
+    font-size: 20px;
+    color: #2E7D32;
+    margin-bottom: 10px;
 }

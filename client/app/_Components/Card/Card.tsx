@@ -20,7 +20,7 @@ export default function CardComp({ doctor }: CardProps) {
     return (
         <div className={styles.card}>
             <Link href={`/doctor/${doctor.id}`} className={styles.imageContainer}>
-                <Image
+                    <Image
                     src={doctor.image}
                     alt={doctor.name}
                     width={100}
@@ -45,18 +45,11 @@ export default function CardComp({ doctor }: CardProps) {
                     height={20}
                     alt="Hourglass"
                 />
-                <p className={styles.experience}>{doctor.experience}</p>
+                <p className={styles.experience}>{doctor.experience} years</p>
             </div>
             <div className={styles.ratingContainer}>
-                {Array.from({ length: 5 }, (_, index) => (
-                    <Image
-                        key={index}
-                        src={index < doctor.rating ? "/star.svg" : "/blankStar.svg"}
-                        alt="star"
-                        width={20}
-                        height={20}
-                    />
-                ))}
+                Rating: {doctor.rating}{" "}
+                <Image alt="star" width={20} height={20} src={"/star.svg"} />
             </div>
             <Link href={`/bookingpage/${doctor.id}`} className={styles.bookButton}>
                 Book Appointment

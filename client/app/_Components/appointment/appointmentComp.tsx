@@ -7,9 +7,8 @@ import { useState, useEffect } from "react";
 interface Doctor {
     id: number;
     name: string;
-    degree: string;
     specialty: string;
-    experience: string;
+    experience: number;
     rating: number;
     image: string;
     designation?: string;
