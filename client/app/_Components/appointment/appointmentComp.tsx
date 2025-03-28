@@ -3,94 +3,184 @@
 import Calendar from "../Calender/showCalender";
 import style from "./booking.module.css";
 import { useState, useEffect } from "react";
+import { formatTime } from "@/utils/formatTime";
+import { validateSlots } from "@/utils/validateSlots";
+import { toast } from "sonner";
 
-interface Doctor {
+const API_BASE_URL = "http://localhost:3001/api";
+
+export interface Slot {
     id: number;
-    name: string;
-    specialty: string;
-    experience: number;
-    rating: number;
-    image: string;
-    designation?: string;
-    hospital?: string;
-    about?: string;
-    education?: string[];
-    nextAvailable?: string;
+    doctor_id: number;
+    slot_time: string;
+    slot_type: "morning" | "evening";
+    is_available: boolean;
 }
 
 interface AppointmentProps {
-    doctor: Doctor;
+    doctorId: number;
 }
 
-export default function Appointment({ doctor }: AppointmentProps) {
-    const [offileGreen, setOffineGreen] = useState(true);
-    const [HospitalList, setHospitalList] = useState([
-        "MediCareHeart Institute, Okhla Road",
-    ]);
-    const [slotsAvailable, setSlotsAvailable] = useState([
-        { time: "9:00 AM", isAvailable: true },
-        { time: "10:00 AM", isAvailable: true },
-        { time: "11:00 AM", isAvailable: true },
-        { time: "11:30 AM", isAvailable: false },
-        { time: "12:00 PM", isAvailable: true },
-        { time: "12:30 PM", isAvailable: false },
-        { time: "1:00 PM", isAvailable: true },
-        { time: "1:30 PM", isAvailable: true },
-    ]);
-    const [slotsAvailableE, setSlotsAvailableE] = useState([
-        { time: "4:00 PM", isAvailable: true },
-        { time: "4:30 PM", isAvailable: false },
-        { time: "5:00 PM", isAvailable: true },
-        { time: "5:30 PM", isAvailable: true },
-        { time: "6:00 PM", isAvailable: true },
-        { time: "6:30 PM", isAvailable: false },
-        { time: "7:00 PM", isAvailable: true },
-        { time: "7:30 PM", isAvailable: false },
-    ]);
-    const [slotSelected, setSlotSelected] = useState(-1);
-    const [slotSelectedE, setSlotSelectedE] = useState(-1);
-    const [count, setCount] = useState(0);
-    const [countE, setCountE] = useState(0);
-    const [modeSelected, setModeSelected] = useState(0);
+export default function Appointment({ doctorId }: AppointmentProps) {
+    const [offlineGreen, setOfflineGreen] = useState(true);
+    const [selectedDate, setSelectedDate] = useState<string>(
+        new Date().toISOString().split("T")[0]
+    );
+    const [slots, setSlots] = useState<Slot[]>([]);
+    const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null);
+    const [appointmentType, setAppointmentType] = useState<
+        "online" | "offline"
+    >("online");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const HospitalList = ["MediCareHeart Institute, Okhla Road"];
 
     useEffect(() => {
-        let temp = 0;
-        slotsAvailable.forEach((data) => {
-            if (data.isAvailable) temp++;
-        });
-        setCount(temp);
-    }, []);
+        if (doctorId) {
+            fetchAvailableSlots();
+        }
+    }, [selectedDate, doctorId]);
 
-    useEffect(() => {
-        let temp2 = 0;
-        slotsAvailableE.forEach((data) => {
-            if (data.isAvailable) temp2++;
-        });
-        setCountE(temp2);
-    }, []);
+    // fetch available slots and validate them
+    const fetchAvailableSlots = async () => {
+        try {
+            setLoading(true);
+            setError(null);
 
-    function handleToggle(i: number) {
-        if (i === 1 && offileGreen) {
-            return;
-        } else if (i === 2 && !offileGreen) {
+            const response = await fetch(
+                `${API_BASE_URL}/appointments/available-slots/${doctorId}/${selectedDate}`,
+                {
+                    headers: {
+                        Accept: "application/json",
+                    },
+                    credentials: "include",
+                }
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                toast.error(errorData.message || "Failed to fetch slots");
+                setError(errorData.message || "Failed to fetch slots");
+                return;
+            }
+
+            const data = await response.json();
+
+            // Ensure all slot data has the required fields and mark past slots as unavailable
+            const validatedSlots = validateSlots(data, selectedDate);
+
+            setSlots(validatedSlots);
+        } catch (err) {
+            toast.error(
+                "Network error. Please check your connection and try again."
+            );
+            setError(
+                "Network error. Please check your connection and try again."
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleBookAppointment = async () => {
+        if (!selectedSlotId) {
+            const errorMessage = "Please select a time slot";
+            setError(errorMessage);
+            toast.error(errorMessage);
             return;
         }
-        setOffineGreen(!offileGreen);
-        setModeSelected(i);
-    }
 
-    function handleSlotSelection(i: number) {
-        setSlotSelected(i);
-        if (slotSelectedE !== -1) setSlotSelectedE(-1);
-    }
+        try {
+            setLoading(true);
 
-    function handleSlotSelectionE(i: number) {
-        setSlotSelectedE(i);
-        if (slotSelected !== -1) setSlotSelected(-1);
-    }
+            // Immediately disable the selected slot in the UI for better UX
+            setSlots((currentSlots) =>
+                currentSlots.map((slot) =>
+                    slot.id === selectedSlotId
+                        ? { ...slot, is_available: false }
+                        : slot
+                )
+            );
 
-    function handleNext() {
-        //handleNext
+            const response = await fetch(`${API_BASE_URL}/appointments/book`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    doctorId,
+                    slotId: selectedSlotId,
+                    appointmentType,
+                    appointmentDate: selectedDate,
+                }),
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                // If booking failed, revert the slot to available
+                setSlots((currentSlots) =>
+                    currentSlots.map((slot) =>
+                        slot.id === selectedSlotId
+                            ? { ...slot, is_available: true }
+                            : slot
+                    )
+                );
+
+                if (
+                    response.status === 400 &&
+                    data.message?.includes("already booked")
+                ) {
+                    // Show toast and refresh slots
+                    toast.error(data.message || "Slot already booked");
+                    fetchAvailableSlots();
+                    return;
+                }
+
+                // Show toast for other errors
+                toast.error(data.message || "Failed to book appointment");
+                setError(data.message || "Failed to book appointment");
+                return;
+            }
+
+            // Reset selection
+            setSelectedSlotId(null);
+
+            toast.success(data.message || "Appointment booked successfully!");
+
+            // Fetch fresh data from server after a short delay
+            setTimeout(() => {
+                fetchAvailableSlots();
+            }, 500);
+        } catch (err) {
+            setSlots((currentSlots) =>
+                currentSlots.map((slot) =>
+                    slot.id === selectedSlotId
+                        ? { ...slot, is_available: true }
+                        : slot
+                )
+            );
+
+            toast.error(
+                "Network error. Please check your connection and try again."
+            );
+            setError(
+                "Network error. Please check your connection and try again."
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const morningSlots = slots.filter((slot) => slot.slot_type === "morning");
+    const eveningSlots = slots.filter((slot) => slot.slot_type === "evening");
+
+    function handleToggle(type: "online" | "offline") {
+        setAppointmentType(type);
+        setOfflineGreen(type === "online");
     }
 
     return (
@@ -107,26 +197,40 @@ export default function Appointment({ doctor }: AppointmentProps) {
                 <div className={style.slots}>
                     <div className={style.schedule}>
                         <p>Schedule Appointment</p>
-                        <button>Book Appointment</button>
+                        <button
+                            onClick={handleBookAppointment}
+                            disabled={loading || !selectedSlotId}
+                        >
+                            {loading ? "Booking..." : "Book Appointment"}
+                        </button>
                     </div>
                     <div className={style.consult}>
                         <button
-                            className={offileGreen ? style.bgGreen : style.White}
-                            onClick={() => handleToggle(1)}
+                            className={
+                                offlineGreen ? style.bgGreen : style.White
+                            }
+                            onClick={() => handleToggle("online")}
                         >
                             Book Video Consult
                         </button>
                         <button
-                            className={!offileGreen ? style.bgGreen : style.White}
-                            onClick={() => handleToggle(2)}
+                            className={
+                                !offlineGreen ? style.bgGreen : style.White
+                            }
+                            onClick={() => handleToggle("offline")}
                         >
                             Book Hospital Visit
                         </button>
                     </div>
                     <select className={style.hospitalList}>
-                        <option>{HospitalList[0]}</option>
+                        {HospitalList.map((hospital, index) => (
+                            <option key={index}>{hospital}</option>
+                        ))}
                     </select>
-                    <Calendar/>
+                    <Calendar
+                        onDateSelect={(date: string) => setSelectedDate(date)}
+                    />
+                    {error && <div className={style.error}>{error}</div>}
                     <div className={style.availableSlots}>
                         <div className={style.sunCountOfSlots}>
                             <div className={style.sunMorning}>
@@ -134,22 +238,45 @@ export default function Appointment({ doctor }: AppointmentProps) {
                                 <div className={style.morning}>Morning</div>
                             </div>
                             <div className={style.countOfSlots}>
-                                <span> Slots {count} </span>
+                                <span>
+                                    Slots{" "}
+                                    {
+                                        morningSlots.filter(
+                                            (s) => s.is_available
+                                        ).length
+                                    }
+                                </span>
                             </div>
                         </div>
                         <div className={style.horizontalLine}></div>
                         <div className={style.availableSlotsContainer}>
-                            {slotsAvailable.map((data, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => handleSlotSelection(i)}
-                                    className={`${i === slotSelected ? style.bgGreen : style.bgWhite} ${
-                                        !data.isAvailable ? style.disabled : ''
-                                    }`}
-                                >
-                                    {data.time}
-                                </button>
-                            ))}
+                            {morningSlots.length > 0 ? (
+                                morningSlots.map((slot) => (
+                                    <button
+                                        key={slot.id}
+                                        onClick={() =>
+                                            slot.is_available &&
+                                            setSelectedSlotId(slot.id)
+                                        }
+                                        className={`${
+                                            slot.id === selectedSlotId
+                                                ? style.bgGreen
+                                                : style.bgWhite
+                                        } ${
+                                            !slot.is_available
+                                                ? style.disabled
+                                                : ""
+                                        }`}
+                                        disabled={!slot.is_available}
+                                    >
+                                        {formatTime(slot.slot_time)}
+                                    </button>
+                                ))
+                            ) : (
+                                <div className={style.noSlots}>
+                                    No morning slots available
+                                </div>
+                            )}
                         </div>
                     </div>
                     <div className={style.availableSlots}>
@@ -159,30 +286,47 @@ export default function Appointment({ doctor }: AppointmentProps) {
                                 <div className={style.morning}>Evening</div>
                             </div>
                             <div className={style.countOfSlots}>
-                                <span> Slots {countE} </span>
+                                <span>
+                                    Slots{" "}
+                                    {
+                                        eveningSlots.filter(
+                                            (s) => s.is_available
+                                        ).length
+                                    }
+                                </span>
                             </div>
                         </div>
                         <div className={style.horizontalLine}></div>
                         <div className={style.availableSlotsContainer}>
-                            {slotsAvailableE.map((data, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => handleSlotSelectionE(i)}
-                                    className={`${i === slotSelectedE ? style.bgGreen : style.bgWhite} ${
-                                        !data.isAvailable ? style.disabled : ''
-                                    }`}
-                                >
-                                    {data.time}
-                                </button>
-                            ))}
+                            {eveningSlots.length > 0 ? (
+                                eveningSlots.map((slot) => (
+                                    <button
+                                        key={slot.id}
+                                        onClick={() =>
+                                            slot.is_available &&
+                                            setSelectedSlotId(slot.id)
+                                        }
+                                        className={`${
+                                            slot.id === selectedSlotId
+                                                ? style.bgGreen
+                                                : style.bgWhite
+                                        } ${
+                                            !slot.is_available
+                                                ? style.disabled
+                                                : ""
+                                        }`}
+                                        disabled={!slot.is_available}
+                                    >
+                                        {formatTime(slot.slot_time)}
+                                    </button>
+                                ))
+                            ) : (
+                                <div className={style.noSlots}>
+                                    No evening slots available
+                                </div>
+                            )}
                         </div>
                     </div>
-                    <button
-                        className={style.nextButton}
-                        onClick={handleNext}
-                    >
-                        Next
-                    </button>
                 </div>
             </div>
         </main>

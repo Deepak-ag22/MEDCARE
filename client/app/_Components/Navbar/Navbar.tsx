@@ -9,7 +9,6 @@ export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
     const { user, logout, fetchUser } = useLogin();
     useEffect(() => {
-        console.log("Navbar mounted, current user:", user);
         fetchUser();
     }, []);
 
@@ -138,7 +137,7 @@ export default function Navbar() {
                                 }}
                                  href="/help"
                             >
-                                <FaAmbulance />
+                                <FaAmbulance size={30}/>
                                 Help
                          </Link>
                         </li>

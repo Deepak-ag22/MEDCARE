@@ -1,7 +1,9 @@
 "use client";
+
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLogin } from "@/app/providers/loginProvider";
-import { useEffect } from "react";
+import { toast } from "sonner";
 
 export default function GoogleCallback() {
     const router = useRouter();
@@ -10,7 +12,7 @@ export default function GoogleCallback() {
     useEffect(() => {
         const handleCallback = async () => {
             try {
-                
+                // Get the user data from the backend
                 const response = await fetch(
                     "http://localhost:3001/api/users/me",
                     {
@@ -25,18 +27,20 @@ export default function GoogleCallback() {
                 const data = await response.json();
                 if (data) {
                     setUser(data);
+                    toast.success("Google sign-in successful! Welcome back!");
                     router.push("/");
                 } else {
                     throw new Error("No user data received");
                 }
             } catch (error) {
                 console.error("Google callback error:", error);
+                toast.error("Google sign-in failed. Please try again.");
                 router.push("/login");
             }
         };
 
         handleCallback();
-    }, [router, setUser]); 
+    }, [router, setUser]);
 
     return (
         <div

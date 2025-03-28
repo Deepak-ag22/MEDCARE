@@ -6,7 +6,8 @@ import styles from "./Login.module.css";
 import Image from "next/image";
 import { useLogin } from "@/app/providers/loginProvider";
 import { useRouter } from "next/navigation";
-import GoogleButton from "../googleSignUpButton/Googlebutton";
+import GoogleSignInButton from "../googleSignUpButton/Googlebutton";
+import { toast } from "sonner";
 
 export default function LoginForm() {
     const [email, setEmail] = useState("");
@@ -18,7 +19,7 @@ export default function LoginForm() {
     const handleLogin = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
         if (!email || !password) {
-            alert("Please enter both email and password");
+            toast.error("Please enter both email and password");
             return;
         }
 
@@ -41,23 +42,29 @@ export default function LoginForm() {
             const data = await response.json();
             if (response.ok) {
                 await fetchUser();
-                router.push("/"); // Redirect to home page after successful login
+                toast.success("Logged in successfully!");
+                router.push("/");
             } else {
-                alert(`Error: ${data.message || "Login failed"}`);
+                toast.error(data.message || "Login failed");
             }
         } catch (error: any) {
             console.error("Login error:", error);
-            alert("An error occurred while logging in. Please try again.");
+            toast.error(
+                "An error occurred while logging in. Please try again."
+            );
         }
     };
 
     const handleReset = () => {
         setEmail("");
         setPassword("");
+        toast.info("Form reset");
     };
+
     const handleGoogleSignIn = () => {
         window.location.href = "http://localhost:3001/api/users/google";
     };
+
     return (
         <div className={styles.loginContainer}>
             <h2>Login</h2>
@@ -130,10 +137,10 @@ export default function LoginForm() {
                     <Link href="/forgot-password">Forgot Password?</Link>
                 </p>
                 <div className={styles.divider}>
-                     <span>or</span>
-                 </div>
- 
-                 <GoogleButton onClick={handleGoogleSignIn} />
+                    <span>or</span>
+                </div>
+
+                <GoogleSignInButton onClick={handleGoogleSignIn} />
             </form>
         </div>
     );

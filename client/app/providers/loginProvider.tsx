@@ -1,6 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { createContext, useContext, useState, useEffect } from "react";
+import { toast } from "sonner";
 
 interface User {
     user_name: string;
@@ -23,6 +25,8 @@ export const LoginProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    const router = useRouter();
+
     const fetchUser = async () => {
         try {
             const res = await fetch(
@@ -39,7 +43,6 @@ export const LoginProvider = ({ children }: { children: React.ReactNode }) => {
 
             if (res.ok) {
                 const userData = await res.json();
-                console.log("Fetched user data:", userData);
                 setUser(userData);
             } else {
                 console.log("Not authenticated, clearing user state");
@@ -60,8 +63,10 @@ export const LoginProvider = ({ children }: { children: React.ReactNode }) => {
                 credentials: "include",
             });
             setUser(null);
+            toast.success("Logged out successfully");
+            router.push("/");
         } catch (error) {
-            console.error("Logout failed", error);
+            toast.error("Logout failed. Please try again.");
         }
     };
 
@@ -69,9 +74,9 @@ export const LoginProvider = ({ children }: { children: React.ReactNode }) => {
         fetchUser();
     }, []);
 
-    
+    // Don't render children until we've checked the user's authentication status
     if (isLoading) {
-        return null; 
+        return null; // Or a loading spinner
     }
 
     return (
