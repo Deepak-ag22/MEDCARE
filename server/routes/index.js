@@ -11,4 +11,6 @@ router.use('/doctors', doctorsRouter);
 const appointmentsRouter = require("./appointmentRouter");
 router.use("/appointments", appointmentsRouter);
 
+const adminRouter = require("./adminRouter");
+router.use("/admin",adminRouter);
 module.exports = router;
