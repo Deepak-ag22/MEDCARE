@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "./Navbar.module.css";
 import Image from "next/image";
-import { useLogin } from "@/app/providers/loginProvider";
+import { useLogin } from "@/app/_providers/loginProvider";
 import { FaAmbulance } from "react-icons/fa";
 export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);

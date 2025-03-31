@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useLogin } from "@/app/providers/loginProvider";
+import { useLogin } from "@/app/_providers/loginProvider";
 import { toast } from "sonner";
 
 export default function GoogleCallback() {

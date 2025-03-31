@@ -94,6 +94,7 @@ exports.getPendingAppointments = async (req, res) => {
             SELECT 
                 a.id,
                 a.appointment_date,
+                s.slot_time,
                 a.slot_id,
                 a.status,
                 d.id as doctor_id,
@@ -103,6 +104,7 @@ exports.getPendingAppointments = async (req, res) => {
                 u.user_name as username,
                 u.user_emailid as user_emailid
             FROM appointments a
+            join slots s on a.slot_id=s.id
             JOIN doctors d ON a.doctor_id = d.id
             JOIN users u ON a.user_id = u.user_id
             WHERE a.status = 'pending'  -- Only fetch pending appointments

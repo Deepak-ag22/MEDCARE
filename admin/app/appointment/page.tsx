@@ -7,6 +7,7 @@ type Appointment = {
   id: number;
   doctor_id: number;
   doctor_name: string;
+  slot_time:string;
   slot_id: number;
   appointment_date: string;
   status: string;
@@ -138,18 +139,24 @@ export default function AdminAppointments() {
               </p>
               <p>
                 <strong>Time:</strong> {
-                  new Date(appt.appointment_date).toISOString().split('T')[1].split('.')[0]
+                    appt.slot_time
                 }
               </p>
               <p>
-                Status:{" "}
-                <span className={
-                  appt.status === "approved" ? styles.approved :
-                  appt.status === "rejected" ? styles.rejected :
-                  styles.pending
-                }>
-                  {appt.status.charAt(0).toUpperCase() + appt.status.slice(1)}
-                </span>
+                <strong>Patient Name:</strong>
+                {appt.username}
+              </p>
+              <p>
+                <strong>
+                  Status:{" "}
+                  <span className={
+                    appt.status === "approved" ? styles.approved :
+                    appt.status === "rejected" ? styles.rejected :
+                    styles.pending
+                  }>
+                    {appt.status.charAt(0).toUpperCase() + appt.status.slice(1)}
+                  </span>
+                </strong>
               </p>
             </div>
             <div className={styles.actions}>

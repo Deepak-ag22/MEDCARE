@@ -2,7 +2,7 @@ import { Montserrat } from "next/font/google";
 import Navbar from "./_Components/Navbar/Navbar";
 import "./globals.css";
 import { Metadata } from "next";
-import { LoginProvider } from "@/app/providers/loginProvider";
+import { LoginProvider } from "@/app/_providers/loginProvider";
 import { Toaster } from "sonner";
 
 const montserrat = Montserrat({

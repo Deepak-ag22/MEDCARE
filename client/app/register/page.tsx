@@ -3,7 +3,7 @@ import SignUpComp from "../_Components/signUp/SignUp";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-import { useLogin } from "@/app/providers/loginProvider";
+import { useLogin } from "@/app/_providers/loginProvider";
 
 
 export default function Register(){

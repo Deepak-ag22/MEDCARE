@@ -1,6 +1,6 @@
 "use client";
 
-import { useLogin } from "@/app/providers/loginProvider";
+import { useLogin } from "@/app/_providers/loginProvider";
 import LoginComp from "../_Components/LoginComp/LoginComp";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

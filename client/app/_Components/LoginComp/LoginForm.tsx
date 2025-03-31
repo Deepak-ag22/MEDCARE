@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import styles from "./Login.module.css";
 import Image from "next/image";
-import { useLogin } from "@/app/providers/loginProvider";
+import { useLogin } from "@/app/_providers/loginProvider";
 import { useRouter } from "next/navigation";
 import GoogleSignInButton from "../googleSignUpButton/Googlebutton";
 import { toast } from "sonner";
