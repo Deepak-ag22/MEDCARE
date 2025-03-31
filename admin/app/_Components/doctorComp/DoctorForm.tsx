@@ -172,10 +172,10 @@ export default function DoctorForm({ onDoctorAdded }: { onDoctorAdded: (doctor: 
 
         <div className={styles.formGroup}>
           <label htmlFor="gender">Gender</label>
-          <select id="gender" name="gender" value={formData.gender} onChange={handleChange}>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
+          <select id="gender" name="gender" value={formData.gender} onChange={handleChange} required>
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
           </select>
         </div>
 

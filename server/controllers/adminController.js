@@ -1,18 +1,18 @@
 const db = require('../config/db');
-
+const cloudinary = require("../config/cloudinary")
 exports.addDoctor = async (req, res) => {
     try {
-        const {
-            name,
-            specialty,
-            experience,
-            location,
-            rating,
-            gender,
-            image,
-        } = req.body;
-        let imageurl = req.file ? req.file.path : image;
-        const ratings = rating || 0; 
+        const { name, specialty, experience, location, rating, gender } = req.body;
+
+        // Ensure file is available in req.file
+        if (!req.file) {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+
+        // Upload image to Cloudinary
+        const imageUrl = await uploadImage(req.file);
+
+        const ratings = rating || 0;
         const doctor = await db.one(
             `INSERT INTO doctors 
                 (name, specialty, experience, location, rating, gender, image)
@@ -25,7 +25,7 @@ exports.addDoctor = async (req, res) => {
                 location,
                 ratings,
                 gender,
-                imageurl,
+                imageUrl,  // Use imageUrl here
             ]
         );
         res.status(201).json({
@@ -34,13 +34,30 @@ exports.addDoctor = async (req, res) => {
         });
     } catch (error) {
         console.error("Error adding doctor:", error);
-        res.status(500).json({ 
-            message: "Error adding doctor", 
-            error: error.message 
+        res.status(500).json({
+            message: "Error adding doctor",
+            error: error.message,
         });
     }
 };
 
+// Function to upload image to Cloudinary
+const uploadImage = async (file) => {
+    if (!file) {
+        throw new Error('No file provided for upload');
+    }
+
+    const base64Image = Buffer.from(file.buffer).toString('base64');
+    const dataURI = `data:${file.mimetype};base64,${base64Image}`;
+
+    try {
+        const uploadResponse = await cloudinary.uploader.upload(dataURI);
+        return uploadResponse.url;  // Return the uploaded image URL
+    } catch (error) {
+        console.error('Cloudinary upload error:', error);
+        throw new Error('Failed to upload image to Cloudinary');
+    }
+};
 exports.deleteDoctor = async (req, res) => {
     try {
         const  id  = parseInt(req.params.id);
