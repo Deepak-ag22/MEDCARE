@@ -22,7 +22,7 @@ router.get('/all-docs', getAllDoctorsAdmin);
 router.post('/create-doc', upload.single('image'), addDoctor);
 router.delete('/:id', deleteDoctor);
 router.get('/appointments',getPendingAppointments);
-router.put('/:id/accept',acceptAppointment)
-router.put('/appointment/:id/reject',rejectAppointment)
-router.delete('/appointment/:id',deleteAppointment);
+router.put('/appointments/:id/accept',acceptAppointment)
+router.put('/appointments/:id/reject',rejectAppointment)
+router.delete('/appointments/:id',deleteAppointment);
 module.exports = router; 

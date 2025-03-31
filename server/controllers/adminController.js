@@ -53,7 +53,7 @@ exports.deleteDoctor = async (req, res) => {
 
 exports.getAllDoctorsAdmin = async (req, res) => {
     try {
-        const doctors = await db(
+        const doctors = await db.any(
             `SELECT 
                 id,
                 name,
@@ -109,10 +109,11 @@ exports.getPendingAppointments = async (req, res) => {
             ORDER BY a.appointment_date DESC, a.slot_id ASC
         `;
         
-        const result = await db.query(query);
-        res.status(200).json(result.rows);
+        const result = await db.any(query);
+        console.log(result);
+        res.status(200).json(result);
     } catch (error) {
-        console.error('Error fetching appointments:', error);
+        console.error('Error fetching appointments:', error.message);
         res.status(500).json({ message: 'Failed to fetch appointments', error: error.message });
     }
 };
@@ -123,7 +124,7 @@ exports.acceptAppointment = async (req, res) => {
         const { id } = req.params;
         const appointment = await db.one(
             `UPDATE appointments 
-             SET status = 'approved'
+             SET status = 'confirmed'
              WHERE id = $1
              RETURNING *`,
             [id]

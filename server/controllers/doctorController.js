@@ -68,6 +68,7 @@ exports.filterDoctors = async (req, res) => {
         }
 
         const whereClause = conditions.length > 0 ? " WHERE " + conditions.join(" AND ") : "";
+        // WHERE rating<=3 AND gender='female' AND experience=10
        
         const baseQuery = `SELECT id, name, specialty, experience, rating, image 
                            FROM doctors${whereClause} 

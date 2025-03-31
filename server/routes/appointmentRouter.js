@@ -30,6 +30,7 @@ router.get(
             );
 
             // Create a Set of unavailable slot IDs for faster lookup
+            // {1,2,5,7,88,9}
             const unavailableSlotIds = new Set(
                 unavailableSlots.map((slot) => slot.slot_id)
             );

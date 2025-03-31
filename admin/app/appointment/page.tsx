@@ -137,7 +137,9 @@ export default function AdminAppointments() {
                 <strong>Date:</strong> {new Date(appt.appointment_date).toLocaleDateString()}
               </p>
               <p>
-                <strong>Time:</strong> {appt.slot_id} {/* Adjust this if you have a time mapping */}
+                <strong>Time:</strong> {
+                  new Date(appt.appointment_date).toISOString().split('T')[1].split('.')[0]
+                }
               </p>
               <p>
                 Status:{" "}

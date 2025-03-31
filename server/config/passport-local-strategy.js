@@ -63,7 +63,7 @@ passport.checkAuthentication = function (req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
-    return res.redirect("/login");
+    return res.redirect("http://localhost:3000/login");
 };
 
 module.exports = passport;
