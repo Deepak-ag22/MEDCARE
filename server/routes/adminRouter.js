@@ -18,6 +18,13 @@ const upload = multer({
 });
 const router = express.Router();
 
+const protectAdmin = require('../middleware/protectAdmin');
+
+// Admin protected route
+router.post('/admin-login', protectAdmin, (req, res) => {
+    // If the user reaches here, they are authenticated
+    res.json({ message: 'Login successful' });
+});
 router.get('/all-docs', getAllDoctorsAdmin);
 router.post('/create-doc', upload.single('image'), addDoctor);
 router.delete('/:id', deleteDoctor);
