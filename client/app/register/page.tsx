@@ -1,5 +1,5 @@
 "use client"
-import SignUpComp from "../_Components/signUp/SignUp";
+import SignUpComp from "../_Components/signUp-Component/SignUp";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 

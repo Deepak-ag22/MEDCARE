@@ -1,5 +1,5 @@
 import styles from "./signup.module.css";
-import SignUpForm from "./SignupForm";
+import SignUpForm from "./Form";
 
 export default function SignUpComp() {
     return (

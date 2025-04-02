@@ -2,7 +2,7 @@
 
 import { ChangeEvent, useState, useEffect, useMemo } from "react";
 import CardComp from "../Card/Card";
-import Search from "../SearchBar/Search";
+import Search from "../Search-Bar/Search";
 import styles from "./Cards.module.css";
 
 interface Doctor {
