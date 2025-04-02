@@ -17,39 +17,33 @@ interface UserContextType {
     logout: () => Promise<void>;
 }
 
-export const LoginContext = createContext<UserContextType | undefined>(
-    undefined
-);
+export const LoginContext = createContext<UserContextType | undefined>(undefined);
 
 export const LoginProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-
     const router = useRouter();
 
     const fetchUser = async () => {
         try {
-            const res = await fetch(
-                "/api/users/me?_t=" + new Date().getTime(),
-                {
-                    credentials: "include",
-                    cache: "no-cache",
-                    headers: {
-                        "Cache-Control": "no-cache, no-store, must-revalidate",
-                        Pragma: "no-cache",
-                    },
-                }
-            );
+            const response = await fetch(`/api/users/me?_t=` + new Date().getTime(), {
+                credentials: "include",
+                cache: "no-cache",
+                headers: {
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    Pragma: "no-cache",
+                },
+            });
 
-            if (res.ok) {
-                const userData = await res.json();
+            if (response.ok) {
+                const userData = await response.json();
                 setUser(userData);
             } else {
-                console.log("Not authenticated, clearing user state");
+                console.warn("User not authenticated, resetting user state.");
                 setUser(null);
             }
         } catch (error) {
-            console.error("Failed to fetch user", error);
+            console.error("Error fetching user data:", error);
             setUser(null);
         } finally {
             setIsLoading(false);
@@ -63,10 +57,10 @@ export const LoginProvider = ({ children }: { children: React.ReactNode }) => {
                 credentials: "include",
             });
             setUser(null);
-            toast.success("Logged out successfully");
+            toast.success("Successfully logged out.");
             router.push("/");
         } catch (error) {
-            toast.error("Logout failed. Please try again.");
+            toast.error("Logout unsuccessful. Please try again.");
         }
     };
 
@@ -74,9 +68,9 @@ export const LoginProvider = ({ children }: { children: React.ReactNode }) => {
         fetchUser();
     }, []);
 
-    // Don't render children until we've checked the user's authentication status
+
     if (isLoading) {
-        return null; // Or a loading spinner
+        return null; // Optionally, return a loading spinner or placeholder
     }
 
     return (
@@ -88,7 +82,7 @@ export const LoginProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useLogin = () => {
     const context = useContext(LoginContext);
-    if (!context)
+    if (!context) 
         throw new Error("useLogin must be used within a LoginProvider");
     return context;
 };

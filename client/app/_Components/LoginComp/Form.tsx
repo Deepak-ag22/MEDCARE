@@ -6,18 +6,23 @@ import styles from "./Login.module.css";
 import Image from "next/image";
 import { useLogin } from "@/app/_providers/loginProvider";
 import { useRouter } from "next/navigation";
-import GoogleSignInButton from "../googleSignUpButton/Googlebutton";
+import GoogleSignInButton from "../googleButton/Google";
 import { toast } from "sonner";
 
 export default function LoginForm() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [formData, setFormData] = useState({ email: "", password: "" });
     const router = useRouter();
-
     const { fetchUser } = useLogin();
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
 
     const handleLogin = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
+        const { email, password } = formData;
+
         if (!email || !password) {
             toast.error("Please enter both email and password");
             return;
@@ -26,38 +31,28 @@ export default function LoginForm() {
         try {
             const response = await fetch("/api/users/login", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
                 credentials: "include",
             });
 
-            // Check if response is JSON
-            const contentType = response.headers.get("content-type");
-            if (!contentType || !contentType.includes("application/json")) {
-                throw new Error("Server returned non-JSON response");
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                toast.error(errorData.message || "Login failed");
+                return;
             }
 
-            const data = await response.json();
-            if (response.ok) {
-                await fetchUser();
-                toast.success("Logged in successfully!");
-                router.push("/");
-            } else {
-                toast.error(data.message || "Login failed");
-            }
-        } catch (error: any) {
+            await fetchUser();
+            toast.success("Logged in successfully!");
+            router.push("/");
+        } catch (error) {
             console.error("Login error:", error);
-            toast.error(
-                "An error occurred while logging in. Please try again."
-            );
+            toast.error("An error occurred while logging in. Please try again.");
         }
     };
 
     const handleReset = () => {
-        setEmail("");
-        setPassword("");
+        setFormData({ email: "", password: "" });
         toast.info("Form reset");
     };
 
@@ -74,25 +69,20 @@ export default function LoginForm() {
                     Sign up here.
                 </Link>
             </p>
-            <br />
             <form onSubmit={handleLogin}>
                 <label>Email</label>
                 <div className={styles.inputField}>
                     <section className={styles.inputcontainer}>
                         <span>
-                            <Image
-                                src="/email.svg"
-                                alt="Email logo"
-                                height={20}
-                                width={20}
-                            />
+                            <Image src="/email.svg" alt="Email logo" height={20} width={20} />
                         </span>
                         <input
                             type="email"
+                            name="email"
                             placeholder="Enter your email"
                             required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={formData.email}
+                            onChange={handleInputChange}
                         />
                     </section>
                 </div>
@@ -101,38 +91,25 @@ export default function LoginForm() {
                 <div className={styles.inputField}>
                     <section className={styles.inputcontainer}>
                         <span>
-                            <Image
-                                src="/lockPass.svg"
-                                alt="pass logo"
-                                height={20}
-                                width={20}
-                            />
+                            <Image src="/lockPass.svg" alt="Password logo" height={20} width={20} />
                         </span>
                         <input
                             type="password"
+                            name="password"
                             placeholder="********"
                             required
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            value={formData.password}
+                            onChange={handleInputChange}
                         />
                     </section>
                 </div>
 
-                <button
-                    type="submit"
-                    className={`${styles.button} ${styles.loginButton}`}
-                >
+                <button type="submit" className={`${styles.button} ${styles.loginButton}`}>
                     Login
                 </button>
-                <button
-                    type="button"
-                    onClick={handleReset}
-                    className={`${styles.button} ${styles.resetButton}`}
-                >
+                <button type="button" onClick={handleReset} className={`${styles.button} ${styles.resetButton}`}>
                     Reset
                 </button>
-                <br />
-                <br />
                 <p className={styles.forgot}>
                     <Link href="/forgot-password">Forgot Password?</Link>
                 </p>

@@ -1,7 +1,7 @@
 "use client";
  
  import Image from "next/image";
- import style from "./GoogleButton.module.css";
+ import style from "./Button.module.css";
  
  interface GoogleSignInButtonProps {
      onClick: () => void;

@@ -1,4 +1,4 @@
-import { Slot } from "@/app/_Components/appointment/appointmentComp";
+import { Slot } from "@/app/_Components/AppointmentComp/Appoint";
 import { isSlotInPast } from "@/utils/checkSlots";
 
 export const validateSlots = (data: any, selectedDate: string) => {

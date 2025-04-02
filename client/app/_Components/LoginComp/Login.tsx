@@ -1,5 +1,5 @@
 import styles from "./Login.module.css";
-import LoginForm from "./LoginForm";
+import LoginForm from "./Form";
 
 export default function LoginComp() {
     return (

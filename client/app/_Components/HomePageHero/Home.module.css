@@ -14,12 +14,12 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  width: 53%;
+  width: 55%;
   height: 100vh;
 }
 
 .textContainer {
-  max-width: 47%;
+  max-width: 45%;
   padding: 5rem;
   padding-left: 3rem;
 }
