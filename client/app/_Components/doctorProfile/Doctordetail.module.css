@@ -10,7 +10,6 @@
     z-index: -1;
 }
 
-/* Main container for doctor details */
 .container {
     max-width: 800px;
     margin: 80px auto;
@@ -39,6 +38,7 @@
 .doctorImage {
     border-radius: 50%;
     border: 3px solid #19671c; /* Green border */
+    object-fit: cover; /* Ensure the image covers the area */
 }
 
 /* Right section for doctor info */
@@ -48,7 +48,7 @@
 
 /* Doctor details */
 .name {
-    font-size: 22px;
+    font-size: 24px; /* Increased font size */
     font-weight: bold;
     color: #333;
 }

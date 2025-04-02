@@ -1,6 +1,6 @@
 "use client";
 
-import DoctorPage from "@/app/_Components/DetailPage/DoctorDetail";
+import DoctorPage from "@/app/_Components/doctorProfile/DoctorDetail";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -22,7 +22,7 @@ export default function DynamicDoctorPage() {
     useEffect(() => {
         const fetchDoctor = async () => {
             try {
-                const response = await fetch(`http://localhost:3001/api/doctors/${params.id}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctors/${params.id}`);
                 
                 if (!response.ok) {
                     throw new Error("Failed to fetch doctor");
@@ -51,8 +51,8 @@ export default function DynamicDoctorPage() {
         }
     }, [params.id]);
 
-    if (error) return <div className="text-red-500">{error}</div>;
-    if (!doctor) return <div className="text-gray-600">Loading...</div>;
+    if (error) return <div className="text-red-400">{error}</div>;
+    if (!doctor) return <div className="text-gray-500">Loading...</div>;
     
     return <DoctorPage doctor={doctor} />;
 }

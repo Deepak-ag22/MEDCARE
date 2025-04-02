@@ -10,16 +10,6 @@
     background-size: cover;
     font-size: 16px;
 }
-
-.header {
-    background-color: rgba(31, 81, 63, 0.9);
-    color: white;
-    padding: 2rem;
-    border-radius: 0.5rem;
-    width: 100%;
-    max-width: 50rem;
-}
-
 .card {
     background: rgba(255, 255, 255, 0.8);
     padding: 1.5rem;
@@ -30,6 +20,16 @@
     width: 100%;
     max-width: 37.5rem;
 }
+
+.header {
+    background-color: rgba(31, 81, 63, 0.9);
+    color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    width: 100%;
+    max-width: 50rem;
+}
+
 
 .link {
     color: rgb(58, 58, 230);

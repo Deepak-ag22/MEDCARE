@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import Image from 'next/image';
 import styles from './Doctordetail.module.css';
 import Link from 'next/link';
@@ -30,6 +31,7 @@ export default function DoctorPage({ doctor }: DoctorPageProps) {
                             width={150}
                             height={150}
                             className={styles.doctorImage}
+                            priority 
                         />
                     </div>
                     <div className={styles.rightSection}>
@@ -52,7 +54,7 @@ export default function DoctorPage({ doctor }: DoctorPageProps) {
                 </div>
                 <div className={styles.aboutSection}>
                     <h2>About {doctor.name}</h2>
-                    <p> {doctor.name} is a highly experienced {doctor.specialty} known for providing excellent patient care and medical expertise.</p>
+                    <p>{doctor.name} is a highly experienced {doctor.specialty} known for providing excellent patient care and medical expertise.</p>
                     <p>With over {doctor.experience} years in the field, {doctor.name} has treated numerous cases with utmost professionalism and dedication.</p>
                 </div>
             </div>
