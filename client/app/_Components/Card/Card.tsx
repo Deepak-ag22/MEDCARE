@@ -51,7 +51,7 @@ export default function CardComp({ doctor }: CardProps) {
                 Rating: {doctor.rating}{" "}
                 <Image alt="star" width={20} height={20} src={"/star.svg"} />
             </div>
-            <Link href={`/bookingpage/${doctor.id}`} className={styles.bookButton}>
+            <Link href={`/doctorbooking/${doctor.id}`} className={styles.bookButton}>
                 Book Appointment
             </Link>
         </div>

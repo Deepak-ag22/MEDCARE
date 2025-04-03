@@ -45,7 +45,7 @@ export default function DoctorPage({ doctor }: DoctorPageProps) {
                         </div>
                         <p className={styles.availability}><strong>Availability:</strong> Mon-Sun (as per slots)</p>
                         <div className={styles.actions}>
-                            <Link href={`/bookingpage/${doctor.id}`}>
+                            <Link href={`/doctorbooking/${doctor.id}`}>
                                 <button className={styles.bookButton}>Book Appointment</button>
                             </Link>
                             <button className={styles.contactButton}>Contact Doctor</button>
