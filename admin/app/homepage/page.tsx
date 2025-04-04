@@ -1,9 +1,11 @@
-import Navbar from "../_Components/Navbar/Navbar";
+import styles from './Homepage.module.css'; 
 
-export default function Homepage(){
+export default function Homepage() {
     return (
         <>
-        <h1 className="flex bg-amber-200 justify-center">Welcome admin</h1>
+            <div className={styles.container}>
+                <h1 className={styles.title}>Welcome admin</h1>
+            </div>
         </>
-);
+    );
 }
