@@ -30,7 +30,7 @@ export default function DoctorList() {
   const fetchDoctors = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3001/api/admin/all-docs",
+        `${process.env.backend_url}/api/admin/all-docs`,
         {
           credentials: "include",
         }
@@ -65,7 +65,7 @@ export default function DoctorList() {
       console.log("Attempting to delete doctor with ID:", doctorId); // Debug log
 
       const response = await fetch(
-        `http://localhost:3001/api/admin/${doctorId}`,
+        `${process.env.backend_url}/api/admin/${doctorId}`,
         {
           method: "DELETE",
           credentials: "include",
