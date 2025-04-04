@@ -1,47 +1,45 @@
 const passport = require("passport");
-const googleStrategy = require("passport-google-oauth").OAuth2Strategy;
+const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
 const bcrypt = require("bcrypt");
 const db = require("./db.js");
 require("dotenv").config();
-let opts = {
-    clientID: process.env.GOOGLE_CLIENTID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL,
+
+const { GOOGLE_CLIENTID, GOOGLE_CLIENT_SECRET, GOOGLE_CALLBACK_URL } = process.env;
+
+const opts = {
+    clientID: GOOGLE_CLIENTID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
+    callbackURL: GOOGLE_CALLBACK_URL,
 };
 
 passport.use(
-    new googleStrategy(
+    new GoogleStrategy(
         opts,
         async (accessToken, refreshToken, profile, done) => {
             try {
+                const userEmail = profile.emails[0].value;
                 const alreadyUser = await db.oneOrNone(
                     "SELECT * FROM users WHERE user_emailid = $1",
-                    [profile.emails[0].value]
+                    [userEmail]
                 );
 
                 if (alreadyUser) {
                     return done(null, alreadyUser);
                 }
-                const query = `
-                INSERT INTO users(user_name, user_emailid, password)
-                VALUES($1, $2, $3)
-                RETURNING user_name, user_emailid, user_id;
-            `;
 
-                const randomPassword = await bcrypt.hash(
-                    Math.random().toString(36),
-                    10
+                const randomPassword = await bcrypt.hash(Math.random().toString(36), 10);
+                const newUser = await db.one(
+                    `
+                    INSERT INTO users(user_name, user_emailid, password)
+                    VALUES($1, $2, $3)
+                    RETURNING user_name, user_emailid, user_id;
+                    `,
+                    [profile.displayName, userEmail, randomPassword]
                 );
-                const result = await db.query(query, [
-                    profile.displayName,
-                    profile.emails[0].value,
-                    randomPassword,
-                ]);
 
-                const newUser = result[0];
                 return done(null, newUser);
             } catch (err) {
-                console.error("Google Oauth Error:", err);
+                console.error("Google OAuth Error:", err);
                 return done(err);
             }
         }
@@ -63,4 +61,5 @@ passport.deserializeUser(async (id, done) => {
         done(err);
     }
 });
+
 module.exports = passport;

@@ -1,8 +1,6 @@
 const passport = require("passport");
-
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
-
 const db = require("../config/db.js");
 
 passport.use(
@@ -10,8 +8,7 @@ passport.use(
         {
             usernameField: "email",
         },
-        async function (email, password, done) {
-            // find user and establish identity
+        async (email, password, done) => {
             try {
                 // Fetch user from database
                 const user = await db.oneOrNone(
@@ -26,9 +23,7 @@ passport.use(
                 // Compare hashed password
                 const isMatch = await bcrypt.compare(password, user.password);
                 if (!isMatch) {
-                    return done(null, false, {
-                        message: "Incorrect password.",
-                    });
+                    return done(null, false, { message: "Incorrect password." });
                 }
 
                 return done(null, user);
@@ -39,12 +34,10 @@ passport.use(
     )
 );
 
-// serializing the user to decide which key is to be kept in cookies
 passport.serializeUser((user, done) => {
     done(null, user.user_id);
 });
 
-// deserializing the user from the key in the cookies
 passport.deserializeUser(async (id, done) => {
     try {
         const user = await db.oneOrNone(
@@ -57,9 +50,8 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-// check if user is authenticated
-passport.checkAuthentication = function (req, res, next) {
-    // check if user is logged in, then pass on the request to next function (controller's action)
+
+passport.checkAuthentication = (req, res, next) => {
     if (req.isAuthenticated()) {
         return next();
     }

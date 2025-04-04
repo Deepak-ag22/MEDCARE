@@ -5,7 +5,6 @@ async function getAvailableSlots(req, res) {
   const { doctorId, date } = req.params;
 
   try {
-    // Get all slots for the doctor
     const slots = await db.any(
       `SELECT * FROM slots 
        WHERE doctor_id = $1
@@ -13,7 +12,6 @@ async function getAvailableSlots(req, res) {
       [doctorId]
     );
 
-    // Get slots with pending or confirmed appointments for the specific date
     const unavailableSlots = await db.any(
       `SELECT a.slot_id 
        FROM appointments a
@@ -23,12 +21,8 @@ async function getAvailableSlots(req, res) {
       [doctorId, date]
     );
 
-    // Create a Set of unavailable slot IDs for faster lookup
-    const unavailableSlotIds = new Set(
-      unavailableSlots.map((slot) => slot.slot_id)
-    );
+    const unavailableSlotIds = new Set(unavailableSlots.map((slot) => slot.slot_id));
 
-    // Mark slots as unavailable if they have pending or confirmed appointments for this date
     const availableSlots = slots.map((slot) => ({
       ...slot,
       is_available: !unavailableSlotIds.has(slot.id),
@@ -47,10 +41,9 @@ async function getAvailableSlots(req, res) {
 // Book an appointment
 async function bookAppointment(req, res) {
   const { doctorId, slotId, appointmentType, appointmentDate } = req.body;
-  const userId = req.user.user_id; // From passport authentication
+  const userId = req.user.user_id;
 
   try {
-    // Check if slot is already booked for the specific date
     const existingAppointment = await db.oneOrNone(
       `SELECT * FROM appointments 
        WHERE slot_id = $1 
@@ -60,24 +53,18 @@ async function bookAppointment(req, res) {
     );
 
     if (existingAppointment) {
-      return res
-        .status(400)
-        .json({ message: "Slot already booked for this date" });
+      return res.status(400).json({ message: "Slot already booked for this date" });
     }
 
-    // Verify the slot exists and belongs to the requested doctor
     const slot = await db.oneOrNone(
       `SELECT * FROM slots WHERE id = $1 AND doctor_id = $2`,
       [slotId, doctorId]
     );
 
     if (!slot) {
-      return res.status(404).json({
-        message: "Slot not found or does not belong to this doctor",
-      });
+      return res.status(404).json({ message: "Slot not found or does not belong to this doctor" });
     }
 
-    // Create a new appointment
     const appointment = await db.one(
       `INSERT INTO appointments 
        (user_id, doctor_id, slot_id, appointment_type, status, appointment_date) 
@@ -94,15 +81,10 @@ async function bookAppointment(req, res) {
     console.error("Error booking appointment:", error);
 
     if (error.code === "23505") {
-      // Handle constraint violation error (slot already booked)
-      return res.status(400).json({
-        message: "This slot is already booked for the selected date.",
-      });
+      return res.status(400).json({ message: "This slot is already booked for the selected date." });
     }
 
-    return res.status(500).json({
-      message: "Error booking appointment. Please try again later.",
-    });
+    return res.status(500).json({ message: "Error booking appointment. Please try again later." });
   }
 }
 

@@ -14,7 +14,7 @@ export default function GoogleCallback() {
             try {
                 // Get the user data from the backend
                 const response = await fetch(
-                    "http://localhost:3001/api/users/me",
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/me`,
                     {
                         credentials: "include",
                     }

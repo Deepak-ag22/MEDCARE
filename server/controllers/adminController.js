@@ -1,34 +1,25 @@
 const db = require('../config/db');
-const cloudinary = require("../config/cloudinary")
-const sendApprovalEmail=require("../config/mailer")
+const cloudinary = require("../config/cloudinary");
+const sendApprovalEmail = require("../config/mailer");
+
 exports.addDoctor = async (req, res) => {
     try {
-        const { name, specialty, experience, location, rating, gender } = req.body;
+        const { name, specialty, experience, location, rating = 0, gender } = req.body;
 
-        // Ensure file is available in req.file
         if (!req.file) {
             return res.status(400).json({ message: 'No file uploaded' });
         }
 
-        // Upload image to Cloudinary
         const imageUrl = await uploadImage(req.file);
 
-        const ratings = rating || 0;
         const doctor = await db.one(
             `INSERT INTO doctors 
                 (name, specialty, experience, location, rating, gender, image)
              VALUES ($1, $2, $3, $4, $5, $6, $7)
              RETURNING *`,
-            [
-                name,
-                specialty,
-                experience,
-                location,
-                ratings,
-                gender,
-                imageUrl,  // Use imageUrl here
-            ]
+            [name, specialty, experience, location, rating, gender, imageUrl]
         );
+
         res.status(201).json({
             message: "Doctor added successfully",
             doctor,
@@ -42,7 +33,6 @@ exports.addDoctor = async (req, res) => {
     }
 };
 
-// Function to upload image to Cloudinary
 const uploadImage = async (file) => {
     if (!file) {
         throw new Error('No file provided for upload');
@@ -53,18 +43,20 @@ const uploadImage = async (file) => {
 
     try {
         const uploadResponse = await cloudinary.uploader.upload(dataURI);
-        return uploadResponse.url;  // Return the uploaded image URL
+        return uploadResponse.url;
     } catch (error) {
         console.error('Cloudinary upload error:', error);
         throw new Error('Failed to upload image to Cloudinary');
     }
 };
+
 exports.deleteDoctor = async (req, res) => {
     try {
-        const  id  = parseInt(req.params.id);
+        const id = parseInt(req.params.id);
         await db.none('DELETE FROM doctors WHERE id = $1', [id]);
         res.json({ message: 'Doctor deleted successfully' });
     } catch (error) {
+        console.error("Error deleting doctor:", error.message);
         res.status(500).json({ message: 'Error deleting doctor', error: error.message });
     }
 };
@@ -73,26 +65,15 @@ exports.getAllDoctorsAdmin = async (req, res) => {
     try {
         const doctors = await db.any(
             `SELECT 
-                id,
-                name,
-                specialty,
-                experience,
-                rating,
-                location,
-                gender,
-                image
+                id, name, specialty, experience, rating, location, gender, image
             FROM doctors 
             ORDER BY name`
         );
-        
-        // Send response
+
         res.json({
             ok: true,
-            data: {
-                rows: doctors
-            }
+            data: { rows: doctors }
         });
-        
     } catch (error) {
         console.error("Error in getAllDoctorsAdmin:", error);
         res.status(500).json({
@@ -101,36 +82,24 @@ exports.getAllDoctorsAdmin = async (req, res) => {
             error: error.message
         });
     }
-}; 
+};
 
-
-
-// Get all pending appointments
 exports.getPendingAppointments = async (req, res) => {
     try {
         const query = `
             SELECT 
-                a.id,
-                a.appointment_date,
-                s.slot_time,
-                a.slot_id,
-                a.status,
-                d.id as doctor_id,
-                d.name as doctor_name,
-                d.specialty as doctor_specialty,
-                u.user_id as user_id,
-                u.user_name as username,
-                u.user_emailid as user_emailid
+                a.id, a.appointment_date, s.slot_time, a.slot_id, a.status,
+                d.id as doctor_id, d.name as doctor_name, d.specialty as doctor_specialty,
+                u.user_id as user_id, u.user_name as username, u.user_emailid as user_emailid
             FROM appointments a
-            join slots s on a.slot_id=s.id
+            JOIN slots s ON a.slot_id = s.id
             JOIN doctors d ON a.doctor_id = d.id
             JOIN users u ON a.user_id = u.user_id
-            WHERE a.status = 'pending'  -- Only fetch pending appointments
+            WHERE a.status = 'pending'
             ORDER BY a.appointment_date DESC, a.slot_id ASC
         `;
-        
+
         const result = await db.any(query);
-        console.log(result);
         res.status(200).json(result);
     } catch (error) {
         console.error('Error fetching appointments:', error.message);
@@ -138,12 +107,10 @@ exports.getPendingAppointments = async (req, res) => {
     }
 };
 
-// Accept appointment
 exports.acceptAppointment = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Update the appointment status
         const appointment = await db.one(
             `UPDATE appointments 
              SET status = 'confirmed'
@@ -152,13 +119,11 @@ exports.acceptAppointment = async (req, res) => {
             [id]
         );
 
-        // Send the response immediately before running the email function
         res.json({
             message: "Appointment confirmed successfully",
             appointment,
         });
 
-        // Fetch user details **after sending the response**
         const user = await db.one(
             `SELECT user_name, user_emailid 
              FROM users 
@@ -166,7 +131,6 @@ exports.acceptAppointment = async (req, res) => {
             [appointment.user_id]
         );
 
-        // Send confirmation email in the background
         if (user.user_emailid) {
             sendApprovalEmail(user.user_emailid, user.user_name)
                 .then(() => console.log("Email sent successfully"))
@@ -179,7 +143,6 @@ exports.acceptAppointment = async (req, res) => {
     }
 };
 
-// Reject appointment
 exports.rejectAppointment = async (req, res) => {
     try {
         const { id } = req.params;
@@ -197,7 +160,6 @@ exports.rejectAppointment = async (req, res) => {
     }
 };
 
-// Delete appointment
 exports.deleteAppointment = async (req, res) => {
     try {
         const { id } = req.params;

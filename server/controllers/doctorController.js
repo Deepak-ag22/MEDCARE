@@ -1,14 +1,11 @@
-const db = require('../config/db');
+const db = require('../config/db.js');
 
 // Get all doctors with pagination
-exports.getAllDoctors = async (req, res) => {
+const getAllDoctors = async (req, res) => {
     const { pageNum } = req.body;
 
     if (!pageNum || isNaN(pageNum)) {
-        return res.status(400).json({
-            ok: false,
-            message: "Invalid page number provided",
-        });
+        return res.status(400).json({ ok: false, message: "Invalid page number provided" });
     }
 
     const page = Math.max(1, parseInt(pageNum));
@@ -21,24 +18,15 @@ exports.getAllDoctors = async (req, res) => {
         const query = "SELECT id, name, specialty, experience, rating, image FROM doctors ORDER BY rating DESC LIMIT 6 OFFSET $1";
         const result = await db.any(query, [offset]);
 
-        return res.status(200).json({
-            ok: true,
-            data: {
-                rows: result,
-                total: total,
-            },
-        });
+        return res.status(200).json({ ok: true, data: { rows: result, total } });
     } catch (error) {
         console.error("Database error:", error.message);
-        return res.status(500).json({
-            ok: false,
-            message: "An error occurred while fetching doctors",
-        });
+        return res.status(500).json({ ok: false, message: "An error occurred while fetching doctors" });
     }
 };
 
 // Filter doctors
-exports.filterDoctors = async (req, res) => {
+const filterDoctors = async (req, res) => {
     const { rating, experience, gender } = req.query;
     const { pageNum } = req.body;
     const page = Math.max(1, parseInt(pageNum || 1));
@@ -68,42 +56,27 @@ exports.filterDoctors = async (req, res) => {
         }
 
         const whereClause = conditions.length > 0 ? " WHERE " + conditions.join(" AND ") : "";
-        // WHERE rating<=3 AND gender='female' AND experience=10
-       
         const baseQuery = `SELECT id, name, specialty, experience, rating, image 
                            FROM doctors${whereClause} 
                            ORDER BY rating DESC LIMIT 6 OFFSET $${paramCounter}`;
 
-        const countQuery = `SELECT COUNT(*) as total 
-                            FROM doctors${whereClause}`;
-
+        const countQuery = `SELECT COUNT(*) as total FROM doctors${whereClause}`;
         queryParams.push(offset);
 
         const countResult = await db.one(countQuery, queryParams.slice(0, -1));
         const total = parseInt(countResult.total) || 0;
 
         const result = await db.any(baseQuery, queryParams);
-
-        return res.status(200).json({
-            ok: true,
-            data: {
-                rows: result,
-                total,
-            },
-        });
+        return res.status(200).json({ ok: true, data: { rows: result, total } });
     } catch (error) {
         console.error("Database error:", error.message);
-        return res.status(500).json({
-            ok: false,
-            message: "An error occurred while filtering doctors: " + error.message,
-        });
+        return res.status(500).json({ ok: false, message: "An error occurred while filtering doctors: " + error.message });
     }
 };
 
 // Search doctors
-exports.searchDoctors = async (req, res) => {
+const searchDoctors = async (req, res) => {
     const { q, page } = req.query;
-
     const pageNum = Math.max(1, parseInt(page || 1));
     const offset = (pageNum - 1) * 6;
 
@@ -128,25 +101,15 @@ exports.searchDoctors = async (req, res) => {
         const total = parseInt(countResult.total) || 0;
 
         const result = await db.any(query, [searchPattern, offset]);
-
-        return res.status(200).json({
-            ok: true,
-            data: {
-                rows: result,
-                total,
-            },
-        });
+        return res.status(200).json({ ok: true, data: { rows: result, total } });
     } catch (error) {
         console.error("Database error:", error.message);
-        return res.status(500).json({
-            ok: false,
-            message: "An error occurred while searching doctors: " + error.message,
-        });
+        return res.status(500).json({ ok: false, message: "An error occurred while searching doctors: " + error.message });
     }
 };
 
 // Get doctor by ID
-exports.getDoctorById = async (req, res) => {
+const getDoctorById = async (req, res) => {
     try {
         const id = parseInt(req.params.id);
         const doctor = await db.one('SELECT * FROM doctors WHERE id = $1', [id]);
@@ -155,3 +118,5 @@ exports.getDoctorById = async (req, res) => {
         res.status(500).json({ message: 'Error fetching doctor', error: error.message });
     }
 };
+
+module.exports = { getAllDoctors, filterDoctors, searchDoctors, getDoctorById };

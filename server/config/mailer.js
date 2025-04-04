@@ -1,25 +1,30 @@
 const nodemailer = require('nodemailer');
 
+const { mailuser, mailpass } = process.env;
+
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: process.env.mailuser,
-        pass: process.env.mailpass,
+        user: mailuser,
+        pass: mailpass,
     },
 });
 
 // Verify connection
-transporter.verify((error, success) => {
-    if (error) {
-        console.error('Error connecting to email server:', error);
-    } else {
+const verifyConnection = async () => {
+    try {
+        await transporter.verify();
         console.log('Email server is ready to send messages.');
+    } catch (error) {
+        console.error('Error connecting to email server:', error);
     }
-});
+};
+
+verifyConnection();
 
 const sendApprovalEmail = async (userEmail, userName) => {
     const mailOptions = {
-        from: 'aditya.pandey@tothenew.com',
+        from: mailuser,
         to: userEmail,
         subject: 'Appointment Approved',
         text: `Dear ${userName}, your appointment request has been approved.`,
